@@ -9,6 +9,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from mysol.database.common import Base
 from mysol.database.settings import DB_SETTINGS
 
+from mysol.app.User.models import User
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

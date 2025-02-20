@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from typing import Annotated
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED
 
-from app.User.dto.requests import UserSignupRequest
-from app.User.dto.reponses import UserSignupResponse
-from app.User.service import UserService
+from mysol.app.User.dto.requests import UserSignupRequest
+from mysol.app.User.dto.reponses import UserSignupResponse
+from mysol.app.User.service import UserService
 
 user_router = APIRouter()
 

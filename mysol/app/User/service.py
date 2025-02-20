@@ -1,9 +1,9 @@
 from typing import Annotated, Optional
 from fastapi import Depends
 
-from app.User.models import User
-from app.User.store import UserStore
-from app.User.hashing import Hasher
+from mysol.app.User.models import User
+from mysol.app.User.store import UserStore
+from mysol.app.User.hashing import Hasher
 
 class UserService:
     def __init__(self, user_store: Annotated[UserStore, Depends()]) -> None:
