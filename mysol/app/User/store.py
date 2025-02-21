@@ -1,32 +1,20 @@
 from typing import Optional
 from sqlalchemy import select
+from datetime import datetime
 
-from mysol.app.User.models import User
+from mysol.app.User.models import User, BlockedToken
 from mysol.database.annotation import transactional
 from mysol.database.connection import SESSION
 from mysol.app.User.hashing import Hasher
 
-from mysol.app.User.errors import (
-    EmailAlreadyExistsError,
-    UserNameAlreadyExistsError,
-    UserUnsignedError,
-    InvalidPasswordError
-)
-
 class UserStore:
     @transactional
     async def add_user(self, email: str, password: str, username: str) -> User:
-        if await self.get_user_by_field("email", email):
-            raise EmailAlreadyExistsError()
-        if await self.get_user_by_field("username", username):
-            raise UserNameAlreadyExistsError()
-
         user = User(
             email=email,
             username=username,
             password=password,
         )
-
         SESSION.add(user)
         await SESSION.flush()
         return user
@@ -45,28 +33,25 @@ class UserStore:
 
     @transactional
     async def update_user(
-        self,
-        username: Optional[str],
-        email: str,
-        old_password: str,
-        new_password: Optional[str],
+        self, user: User, username: Optional[str], email: Optional[str], new_password: Optional[str]
     ) -> User:
-        user = await self.get_user_by_email(email)
-        if user is None:
-            raise UserUnsignedError()
-
-        if not self._check_password(user.password, old_password):
-            raise InvalidPasswordError()
-
-        if username and await self.get_user_by_field("username", username):
-            raise UserNameAlreadyExistsError()
         if username:
             user.username = username
-
+        if email:
+            user.email = email
         if new_password:
             user.password = new_password
-
         return user
 
-    def _check_password(self, stored_password: str, input_password: str) -> bool:
-        return Hasher.verify_password(input_password, stored_password)
+    @transactional
+    async def block_token(self, token_id: str, expired_at: datetime) -> None:
+        blocked_token = BlockedToken(token_id=token_id, expired_at=expired_at)
+        SESSION.add(blocked_token)
+
+    async def is_token_blocked(self, token_id: str) -> bool:
+        return (
+            await SESSION.scalar(
+                select(BlockedToken).where(BlockedToken.token_id == token_id)
+            )
+            is not None
+        )

@@ -21,4 +21,14 @@ class DatabaseSettings(BaseSettings):
         env_file=SETTINGS.env_file,
     )
 
+class PasswordSettings(BaseSettings):
+    secret_for_jwt: str  # JWT 비밀키
+    kakao_rest_api_key: str  # 카카오 REST API 키
+    gmail_app_password: str
+
+    class Config:
+        env_file = ".env.password"
+        env_file_encoding = "utf-8"
+
+PW_SETTINGS = PasswordSettings()
 DB_SETTINGS = DatabaseSettings()
