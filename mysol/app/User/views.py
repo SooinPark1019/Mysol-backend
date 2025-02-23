@@ -44,7 +44,8 @@ async def signin(
     access_token, refresh_token = await user_service.signin(
         signin_request.email, signin_request.password
     )
-    return UserSigninResponse(access_token=access_token, refresh_token=refresh_token)
+    user = await user_service.get_user_by_email(signin_request.email)
+    return UserSigninResponse(access_token=access_token, refresh_token=refresh_token, username=user.username)
 
 @user_router.get("/refresh", status_code=HTTP_200_OK)
 async def refresh(

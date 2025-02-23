@@ -9,6 +9,7 @@ class UserSignupResponse(BaseModel):
 class UserSigninResponse(BaseModel):
     access_token: str
     refresh_token: str
+    username: str
 
 class MyProfileResponse(BaseModel):
     username: str
