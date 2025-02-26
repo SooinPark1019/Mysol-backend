@@ -1,7 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from mysol.settings import SETTINGS
 
-
 class DatabaseSettings(BaseSettings):
     dialect: str = ""
     driver: str = ""
@@ -21,6 +20,17 @@ class DatabaseSettings(BaseSettings):
         env_file=SETTINGS.env_file,
     )
 
+class AWSSettings(BaseSettings):
+    access_key_id: str
+    secret_access_key: str 
+    default_region: str
+    s3_bucket: str 
+    model_config = SettingsConfigDict(
+        case_sensitive=False,
+        env_prefix="AWS_",
+        env_file=".env.aws",
+    )
+
 class PasswordSettings(BaseSettings):
     secret_for_jwt: str  # JWT 비밀키
     kakao_rest_api_key: str  # 카카오 REST API 키
@@ -32,3 +42,4 @@ class PasswordSettings(BaseSettings):
 
 PW_SETTINGS = PasswordSettings()
 DB_SETTINGS = DatabaseSettings()
+AWS_SETTINGS = AWSSettings()
